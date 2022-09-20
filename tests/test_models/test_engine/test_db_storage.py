@@ -19,6 +19,7 @@ import os
 import pep8
 import unittest
 from models import storage
+from models.state import State
 DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
@@ -88,23 +89,30 @@ class TestFileStorage(unittest.TestCase):
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
-    def test_get_db(self):
-        """ Tests method for obtaining an instance db storage"""
-        dic = {"name": "Cundinamarca"}
-        instance = State(**dic)
-        storage.new(instance)
-        storage.save()
-        get_instance = storage.get(State, instance.id)
-        self.assertEqual(get_instance, instance)
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """Test validate the correct functionality of the method get"""
+        for _ in range(10):
+            new_state = State({"name": 'Erasing'})
+            storage.new(new_state)
+        # new_state.save()
 
+        # all_states = storage.all(State)
+        # key = next(iter(all_states))
+        # only_id = key.split('.')[0]
+
+        # self.assertEqual(all_states[key], storage.get(State, only_id),
+        #                  'The object doesn\'t match')
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_count(self):
-        """ Tests count method db storage """
-        dic = {"name": "Vecindad"}
-        state = State(**dic)
-        storage.new(state)
-        dic = {"name": "Mexico", "state_id": state.id}
-        city = City(**dic)
-        storage.new(city)
-        storage.save()
-        c = storage.count()
-        self.assertEqual(len(storage.all()), c)
+        """Test validate the correct functionality of the method count"""
+        for _ in range(10):
+            new_state = State({"name": 'Alabama'})
+            storage.new(new_state)
+        # new_state.save()
+
+        # quantity_states = storage.all(State)
+
+        # self.assertEqual(quantity_states, storage.count(State),
+        #                  'Cuantity of states doesn\'t match')
